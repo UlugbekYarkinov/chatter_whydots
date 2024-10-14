@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "151892312841",
+    "project_id": "flashchatwhydots",
+    "storage_bucket": "flashchatwhydots.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151892312841:android:de26c3ac3c02265942c9d8",
+        "android_client_info": {
+          "package_name": "com.example.chatter_whydots"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDccWJkTLuNnMYMxF4tdrn-3wN6MvbGVAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
