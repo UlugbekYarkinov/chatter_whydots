@@ -12,6 +12,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final messageTextFieldController = TextEditingController();
   final _fireStore = FirebaseFirestore.instance; //object of Cloud Firestore
   late String messageText;
   final _auth = FirebaseAuth.instance;
@@ -31,17 +32,17 @@ class _ChatScreenState extends State<ChatScreen> {
         loggedInUser = user;
       }
     } catch (e) {
-      print(e);
+      rethrow;
     }
   }
 
-  void messageStream() async {
-    await for (var snapshot in _fireStore.collection('messages').snapshots()) {
-      for (var message in snapshot.docs) {
-        print(message.data());
-      }
-    }
-  }
+  // void messageStream() async {
+  //   await for (var snapshot in _fireStore.collection('messages').snapshots()) {
+  //     for (var message in snapshot.docs) {
+  //       print(message.data());
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -78,48 +79,51 @@ class _ChatScreenState extends State<ChatScreen> {
                 //AsyncSnapshot -> QuerySnapshot -> Docs
                 final documents = snapshot.data!.docs;
                 List<MessageBubble> messageWidgets = [];
-                for(var doc in documents) {
-                  messageWidgets.add(
-                    MessageBubble(sender: doc['sender'], text: doc['text'])
-                  );
+                for (var doc in documents) {
+                  messageWidgets.add(MessageBubble(
+                    sender: doc['sender'],
+                    text: doc['text'],
+                    isMe: loggedInUser.email == doc['sender'],
+                  ));
                 }
 
                 return Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 20.0),
                     children: messageWidgets,
                   ),
                 );
               },
             ),
-            Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      onChanged: (value) {
-                        messageText = value;
-                      },
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 20.0),
-                        hintText: 'Type your message here...',
-                        border: InputBorder.none,
-                      ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: messageTextFieldController,
+                    onChanged: (value) {
+                      messageText = value;
+                    },
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 20.0),
+                      hintText: 'Type your message here...',
+                      border: InputBorder.none,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      _fireStore.collection('messages').add({
-                        'sender': loggedInUser.email,
-                        'text': messageText,
-                      });
-                    },
-                    child: const Text('Send'),
-                  ),
-                ],
-              ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    messageTextFieldController.clear();
+                    _fireStore.collection('messages').add({
+                      'sender': loggedInUser.email,
+                      'text': messageText,
+                    });
+                  },
+                  child: const Text('Send'),
+                ),
+              ],
             )
           ],
         ),
