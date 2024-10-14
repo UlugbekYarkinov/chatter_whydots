@@ -68,7 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             StreamBuilder(
-              stream: _fireStore.collection('messages').snapshots(),
+              stream: _fireStore.collection('messages').orderBy('ts', descending: true).snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(
@@ -89,6 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                 return Expanded(
                   child: ListView(
+                    reverse: true,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10.0, vertical: 20.0),
                     children: messageWidgets,
@@ -119,6 +120,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     _fireStore.collection('messages').add({
                       'sender': loggedInUser.email,
                       'text': messageText,
+                      'ts' : Timestamp.now(),
                     });
                   },
                   child: const Text('Send'),
