@@ -84,6 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     sender: doc['sender'],
                     text: doc['text'],
                     isMe: loggedInUser.email == doc['sender'],
+                    time: doc['ts'],
                   ));
                 }
 

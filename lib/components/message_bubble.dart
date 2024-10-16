@@ -1,11 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class MessageBubble extends StatelessWidget {
-  const MessageBubble({super.key, required this.sender, required this.text, required this.isMe});
+  const MessageBubble({super.key, required this.sender, required this.text, required this.isMe, required this.time});
 
   final String sender;
   final String text;
   final bool isMe;
+  final Timestamp time;
+
+  String getTime() {
+    int hours = time.toDate().hour;
+    int minutes = time.toDate().minute;
+
+    String partOfDay;
+
+    if(hours < 12) {
+      if(hours == 0) hours = 12;
+      partOfDay = 'AM';
+    } else {
+      hours -= 12;
+      if(hours == 0) hours = 12;
+      partOfDay = 'PM';
+    }
+
+    return '$hours:$minutes $partOfDay';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +61,24 @@ class MessageBubble extends StatelessWidget {
                 horizontal: 20.0,
                 vertical: 10.0,
               ),
-              child: Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 15.0,
-                  color: Colors.white, //TODO: change if necessary
-                ),
+              child: Column(
+                crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      fontSize: 15.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    getTime(),
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.white70,
+                    ),
+                  )
+                ],
               ),
             ),
           )
